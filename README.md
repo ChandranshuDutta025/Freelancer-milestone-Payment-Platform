@@ -1,36 +1,208 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Freelancer Milestone Payment Platform
 
-## Getting Started
+A decentralized milestone-based payment platform for freelancers built on the **Stellar** blockchain using **Soroban smart contracts**. Clients can create projects with milestones, deposit funds in escrow, and release payments automatically upon milestone approval.
 
-First, run the development server:
+## Features
+
+- **Multi-Wallet Support** - Connect with Freighter, xBull, Albedo, LOBSTR, Rabet, and Hana via StellarWalletsKit
+- **Smart Contract Escrow** - Funds are held in a Soroban smart contract until milestones are approved
+- **Milestone Management** - Create projects with multiple milestones, each with its own budget
+- **Role-Based Actions** - Clients deposit/approve, freelancers accept/submit
+- **Real-Time Updates** - Automatic polling and event-based state synchronization
+- **Transaction Tracking** - Monitor transaction status (pending/success/failed) with explorer links
+- **Activity Feed** - Real-time event stream of all contract interactions
+- **Dark Mode** - Full dark/light theme support with next-themes and shadcn/ui
+- **Responsive Design** - Mobile-first layout with responsive navigation
+
+## Tech Stack
+
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4
+- **UI Library:** shadcn/ui
+- **Blockchain:** Stellar / Soroban
+- **Wallet:** StellarWalletsKit
+- **SDKs:** `@stellar/stellar-sdk`, `soroban-sdk`
+- **State:** Zustand
+- **Data Fetching:** TanStack Query (React Query)
+- **Icons:** lucide-react
+- **Theme:** next-themes
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js 20+
+- Rust (for smart contract development)
+- Stellar CLI (`stellar`)
+
+### 1. Clone and Install
+
+```bash
+git clone <repository-url>
+cd freelancer-milestone-payment
+npm install
+```
+
+### 2. Environment Variables
+
+Copy `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+### 3. Start Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_STELLAR_NETWORK` | Stellar network (testnet/mainnet) | `testnet` |
+| `NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE` | Network passphrase | `Test SDF Network ; September 2015` |
+| `NEXT_PUBLIC_STELLAR_RPC_URL` | Soroban RPC endpoint | `https://soroban-testnet.stellar.org` |
+| `NEXT_PUBLIC_CONTRACT_ID` | Deployed contract ID | (set after deployment) |
+| `STELLAR_ACCOUNT` | CLI account name for deployment | `freelancer-admin` |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Wallet Setup
 
-## Learn More
+1. Install one of the supported wallet extensions:
+   - [Freighter](https://freighter.app/)
+   - [xBull](https://xbull.app/)
+   - [Albedo](https://albedo.link/)
+   - [LOBSTR](https://lobstr.co/)
+   - [Rabet](https://rabet.io/)
+   - [Hana](https://hanawallet.io/)
 
-To learn more about Next.js, take a look at the following resources:
+2. Switch to **Testnet** in your wallet settings
+3. Fund your account using the [Stellar Lab Friendbot](https://lab.stellar.org/account/create) (testnet only)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contract Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Prerequisites
 
-## Deploy on Vercel
+Install the Stellar CLI:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+cargo install stellar-cli
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Deploy to Testnet
+
+```bash
+# Ensure your .env is configured
+STELLAR_ACCOUNT=freelancer-admin npm run deploy
+```
+
+Or manually:
+
+```bash
+# Build the contract
+cd contracts/freelancer-milestone
+stellar contract build
+
+# Deploy to testnet
+stellar contract deploy \
+  --wasm target/wasm32v1-none/release/freelancer_milestone.wasm \
+  --ignore-checks \
+  --alias freelancer-milestone \
+  --source <YOUR-KEY> \
+  --network testnet
+
+# Save the returned CONTRACT_ID to .env as NEXT_PUBLIC_CONTRACT_ID
+```
+
+### Contract Functions
+
+| Function | Description | Auth |
+|----------|-------------|------|
+| `create_project` | Create a new project with milestones | Client |
+| `accept_project` | Freelancer accepts a project | Freelancer |
+| `deposit_milestone` | Client deposits XLM for a milestone | Client |
+| `submit_milestone` | Freelancer submits milestone work | Freelancer |
+| `approve_milestone` | Client approves milestone | Client |
+| `release_payment` | Release payment to freelancer | Anyone |
+| `cancel_project` | Client cancels an open project | Client |
+| `get_project` | Read project details | - |
+| `get_milestone` | Read milestone details | - |
+| `get_client_projects` | Get all project IDs for a client | - |
+| `get_freelancer_projects` | Get all project IDs for a freelancer | - |
+
+## Running Locally
+
+```bash
+# Development
+npm run dev
+
+# Build
+npm run build
+
+# Lint
+npm run lint
+```
+
+## Deployment
+
+### Deploy to Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+
+1. Push to GitHub
+2. Import project to Vercel
+3. Add environment variables from `.env.example`
+4. Set `NEXT_PUBLIC_CONTRACT_ID` to your deployed contract ID
+5. Deploy
+
+### Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+## Contract Address
+
+```
+CONTRACT_ADDRESS_HERE
+```
+
+## Example Transaction Hash
+
+```
+TRANSACTION_HASH_HERE
+```
+
+## Commit Plan
+
+### Commit 1: Project Initialization and Wallet Integration
+- Next.js 15 setup with TypeScript and Tailwind
+- StellarWalletsKit integration with multi-wallet support
+- Zustand stores for wallet, transactions, events, and projects
+- Wallet dashboard, connect/disconnect UI
+
+### Commit 2: Smart Contract Deployment and Frontend Integration
+- Soroban smart contract (create/accept/submit/approve/release)
+- Contract deployment scripts
+- React Query hooks for contract interactions
+- Create project modal, milestone tracker, project cards
+
+### Commit 3: Real-Time Events and Transaction Tracking
+- Event polling system via Soroban RPC
+- Activity feed with event filtering
+- Transaction history with status tracking
+- Explorer links and automatic updates
+
+### Commit 4: UI Polish and Documentation
+- Dark mode with next-themes
+- Responsive layout and mobile navigation
+- Toast notifications with sonner
+- Skeleton loaders and empty states
+- Complete README with setup instructions
+
+## License
+
+MIT
