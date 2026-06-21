@@ -311,6 +311,7 @@ function useContractMutation<TData = unknown>(options: {
         throw new Error("sendTransaction returned ERROR")
       const txHash = sendJson.result.hash
 
+      console.log("[mutation] calling addTransaction:", txHash)
       addTransaction({
         hash: txHash,
         status: "pending",
@@ -418,6 +419,7 @@ export function useCreateProject() {
       },
     ) => {
       const result = await mutation.mutateAsync(vars)
+      console.log("[useCreateProject] calling addEvent, tx:", result.transactionHash)
       addEvent({
         id: `evt-${Date.now()}`,
         type: "project_created",
