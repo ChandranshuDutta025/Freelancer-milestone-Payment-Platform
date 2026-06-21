@@ -82,18 +82,18 @@ function SheetContent({
 
   return (
     <div className="fixed inset-0 z-50">
-      <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={() => onOpenChange(false)}
-      />
-      <div
-        className={cn(
-          "fixed z-50 gap-4 bg-background p-6 shadow-lg transition-transform",
-          sideStyles[side],
-          className,
-        )}
-        {...props}
-      >
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+      onClick={() => onOpenChange(false)}
+    />
+    <div
+      className={cn(
+        "fixed z-50 gap-4 p-6 shadow-2xl transition-transform glass-card",
+        sideStyles[side],
+        className,
+      )}
+      {...props}
+    >
         <button
           onClick={() => onOpenChange(false)}
           className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"

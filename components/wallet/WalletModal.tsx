@@ -42,7 +42,6 @@ export function WalletModal({ open, onOpenChange }: WalletModalProps) {
       await connect()
       onOpenChange(false)
     } catch {
-      // Error is handled by store
     } finally {
       setConnecting(null)
     }
@@ -52,8 +51,8 @@ export function WalletModal({ open, onOpenChange }: WalletModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Wallet className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-white">
+            <Wallet className="h-5 w-5 text-blue-400" />
             Connect Wallet
           </DialogTitle>
           <DialogDescription>
@@ -64,7 +63,7 @@ export function WalletModal({ open, onOpenChange }: WalletModalProps) {
         <div className="space-y-2 py-4">
           {wallets.length === 0 ? (
             <motion.div
-              className="flex items-center gap-2 text-sm text-muted-foreground p-4 border rounded-lg"
+              className="flex items-center gap-2 text-sm text-muted-foreground p-4 rounded-xl border border-white/10 bg-white/[0.04]"
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
             >
@@ -81,7 +80,7 @@ export function WalletModal({ open, onOpenChange }: WalletModalProps) {
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <Button
                         variant="outline"
-                        className="w-full justify-start gap-3 h-14"
+                        className="w-full justify-start gap-3 h-14 border-white/10 hover:border-blue-400/30 hover:bg-blue-500/10"
                         onClick={() => handleConnect(id)}
                         disabled={isConnecting}
                       >
@@ -93,7 +92,7 @@ export function WalletModal({ open, onOpenChange }: WalletModalProps) {
                           {walletIcons[id] ?? "💳"}
                         </motion.span>
                         <div className="flex flex-col items-start">
-                          <span className="font-medium">
+                          <span className="font-medium text-white">
                             {walletNames[id] ?? wallet.name ?? "Unknown Wallet"}
                           </span>
                           <span className="text-xs text-muted-foreground">
@@ -112,7 +111,7 @@ export function WalletModal({ open, onOpenChange }: WalletModalProps) {
           <AnimatePresence>
             {error && (
               <motion.div
-                className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 p-3 rounded-lg"
+                className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 p-3 rounded-xl"
                 initial={{ opacity: 0, y: -8, height: 0 }}
                 animate={{ opacity: 1, y: 0, height: "auto" }}
                 exit={{ opacity: 0, y: -8, height: 0 }}

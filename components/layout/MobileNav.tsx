@@ -39,9 +39,9 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="left" className="flex flex-col gap-0 p-0">
-        <SheetHeader className="flex flex-row items-center justify-between border-b px-4 py-4">
-          <SheetTitle className="text-lg font-bold">
-            Freelancer Milestone
+        <SheetHeader className="flex flex-row items-center justify-between border-b border-white/[0.06] px-4 py-4">
+          <SheetTitle className="text-lg font-bold gradient-text">
+            FreelancerPay
           </SheetTitle>
           <Button
             variant="ghost"
@@ -61,10 +61,10 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                 key={item.href}
                 href={item.href}
                 onClick={() => onOpenChange(false)}
-                className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-white/[0.06]"
+                    : "text-muted-foreground hover:text-white hover:bg-white/[0.04]"
                 }`}
               >
                 <Icon className="h-5 w-5" />
@@ -74,11 +74,11 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
           })}
         </nav>
 
-        <div className="border-t p-4">
+        <div className="border-t border-white/[0.06] p-4">
           {isConnected && address ? (
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">Connected as</p>
-              <p className="font-mono text-sm font-medium truncate">
+              <p className="font-mono text-sm font-medium text-white/80 truncate">
                 {truncateAddress(address, 6)}
               </p>
             </div>

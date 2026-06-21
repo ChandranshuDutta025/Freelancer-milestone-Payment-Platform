@@ -148,7 +148,7 @@ export function useGetClientProjects() {
       )
 
       if (!isSimSuccess(res) || !res.result) return []
-      return scValToNative(res.result.retval) as number[]
+      return (scValToNative(res.result.retval) as bigint[]).map(Number)
     },
     enabled: isConnected && !!address,
   })
@@ -181,7 +181,7 @@ export function useGetFreelancerProjects() {
       )
 
       if (!isSimSuccess(res) || !res.result) return []
-      return scValToNative(res.result.retval) as number[]
+      return (scValToNative(res.result.retval) as bigint[]).map(Number)
     },
     enabled: isConnected && !!address,
   })

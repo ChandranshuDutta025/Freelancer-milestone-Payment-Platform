@@ -7,7 +7,6 @@ import {
   ResponsiveContainer, Legend,
 } from "recharts"
 
-// ── Fake data ──────────────────────────────────────────────────────────
 const volumeData = [
   { month: "Jan", volume: 42000, txns: 310 },
   { month: "Feb", volume: 58000, txns: 420 },
@@ -58,7 +57,9 @@ const PIE_COLORS = [
   CHART_COLORS.cyan, CHART_COLORS.emerald, CHART_COLORS.orange,
 ]
 
-// ── Custom Tooltip ──────────────────────────────────────────────────────
+const gridColor = "rgba(255,255,255,0.06)"
+const tickColor = "#94A3B8"
+
 const CustomTooltip = ({ active, payload, label }: {
   active?: boolean
   payload?: { name: string; value: number; color: string }[]
@@ -66,7 +67,7 @@ const CustomTooltip = ({ active, payload, label }: {
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white dark:bg-[#0f1117] border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 shadow-2xl text-sm">
+      <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-3 shadow-2xl text-sm">
         <p className="text-muted-foreground mb-1 font-medium">{label}</p>
         {payload.map((p) => (
           <p key={p.name} style={{ color: p.color }} className="font-semibold">
@@ -80,8 +81,6 @@ const CustomTooltip = ({ active, payload, label }: {
   }
   return null
 }
-
-// ── Individual Chart Components ─────────────────────────────────────────
 
 export function VolumeAreaChart() {
   return (
@@ -97,9 +96,9 @@ export function VolumeAreaChart() {
             <stop offset="95%" stopColor={CHART_COLORS.purple} stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(216 34% 17%)" />
-        <XAxis dataKey="month" tick={{ fill: "#64748b", fontSize: 12 }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fill: "#64748b", fontSize: 11 }} axisLine={false} tickLine={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+        <XAxis dataKey="month" tick={{ fill: tickColor, fontSize: 12 }} axisLine={false} tickLine={false} />
+        <YAxis tick={{ fill: tickColor, fontSize: 11 }} axisLine={false} tickLine={false} />
         <Tooltip content={<CustomTooltip />} />
         <Area type="monotone" dataKey="volume" name="Volume (XLM)" stroke={CHART_COLORS.blue} strokeWidth={2} fill="url(#volumeGrad)" />
         <Area type="monotone" dataKey="txns" name="Transactions" stroke={CHART_COLORS.purple} strokeWidth={2} fill="url(#txnGrad)" />
@@ -112,11 +111,11 @@ export function MilestoneBarChart() {
   return (
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={milestoneData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }} barGap={3}>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(216 34% 17%)" vertical={false} />
-        <XAxis dataKey="week" tick={{ fill: "#64748b", fontSize: 12 }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fill: "#64748b", fontSize: 11 }} axisLine={false} tickLine={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+        <XAxis dataKey="week" tick={{ fill: tickColor, fontSize: 12 }} axisLine={false} tickLine={false} />
+        <YAxis tick={{ fill: tickColor, fontSize: 11 }} axisLine={false} tickLine={false} />
         <Tooltip content={<CustomTooltip />} />
-        <Legend wrapperStyle={{ fontSize: "12px", color: "#64748b" }} />
+        <Legend wrapperStyle={{ fontSize: "12px", color: tickColor }} />
         <Bar dataKey="completed" name="Completed" fill={CHART_COLORS.emerald} radius={[4, 4, 0, 0]} />
         <Bar dataKey="pending" name="Pending" fill={CHART_COLORS.blue} radius={[4, 4, 0, 0]} />
         <Bar dataKey="disputed" name="Disputed" fill={CHART_COLORS.orange} radius={[4, 4, 0, 0]} />
@@ -147,7 +146,7 @@ export function CategoryPieChart() {
             if (active && payload && payload.length) {
               const d = payload[0]
               return (
-                <div className="bg-white dark:bg-[#0f1117] border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 shadow-lg text-sm">
+                <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-xl px-3 py-2 shadow-2xl text-sm">
                   <p style={{ color: d.payload.fill ?? "#fff" }} className="font-semibold">{d.name}: {d.value}%</p>
                 </div>
               )
@@ -158,7 +157,7 @@ export function CategoryPieChart() {
         <Legend
           iconType="circle"
           iconSize={8}
-          wrapperStyle={{ fontSize: "12px", color: "#64748b" }}
+          wrapperStyle={{ fontSize: "12px", color: tickColor }}
         />
       </PieChart>
     </ResponsiveContainer>
@@ -169,8 +168,8 @@ export function SkillRadarChart() {
   return (
     <ResponsiveContainer width="100%" height={220}>
       <RadarChart data={skillData}>
-        <PolarGrid stroke="hsl(216 34% 17%)" />
-        <PolarAngleAxis dataKey="skill" tick={{ fill: "#64748b", fontSize: 11 }} />
+        <PolarGrid stroke={gridColor} />
+        <PolarAngleAxis dataKey="skill" tick={{ fill: tickColor, fontSize: 11 }} />
         <Radar name="Score" dataKey="score" stroke={CHART_COLORS.cyan} fill={CHART_COLORS.cyan} fillOpacity={0.2} strokeWidth={2} />
         <Tooltip content={<CustomTooltip />} />
       </RadarChart>
@@ -182,9 +181,9 @@ export function TxnLineChart() {
   return (
     <ResponsiveContainer width="100%" height={220}>
       <LineChart data={volumeData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(216 34% 17%)" />
-        <XAxis dataKey="month" tick={{ fill: "#64748b", fontSize: 12 }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fill: "#64748b", fontSize: 11 }} axisLine={false} tickLine={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+        <XAxis dataKey="month" tick={{ fill: tickColor, fontSize: 12 }} axisLine={false} tickLine={false} />
+        <YAxis tick={{ fill: tickColor, fontSize: 11 }} axisLine={false} tickLine={false} />
         <Tooltip content={<CustomTooltip />} />
         <Line type="monotone" dataKey="txns" name="Transactions" stroke={CHART_COLORS.cyan} strokeWidth={2.5} dot={{ fill: CHART_COLORS.cyan, r: 4 }} activeDot={{ r: 6 }} />
       </LineChart>

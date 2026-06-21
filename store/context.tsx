@@ -6,9 +6,14 @@ import {
   useState,
   useCallback,
   useMemo,
+  useEffect,
   type ReactNode,
 } from "react"
 import type { TransactionRecord, ContractEvent, EventType } from "@/types"
+
+const TX_STORAGE_KEY = "__APP_TX_DATA"
+const EV_STORAGE_KEY = "__APP_EV_DATA"
+const MAX_STORED = 100
 
 // Window-global keys to survive Turbopack module duplication
 const TX_CTX_KEY = "__APP_TX_CTX"
@@ -56,14 +61,47 @@ const EV_Ctx = (
 ) as React.Context<EvValue | null>
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
-  const [transactions, setTransactions] = useState<TransactionRecord[]>([])
+  const [transactions, setTransactions] = useState<TransactionRecord[]>(() => {
+    if (typeof window === "undefined") return []
+    try {
+      const raw = localStorage.getItem(TX_STORAGE_KEY)
+      return raw ? (JSON.parse(raw) as TransactionRecord[]) : []
+    } catch {
+      return []
+    }
+  })
   const [currentTx, setCurrentTx] = useState<TransactionRecord | null>(null)
-  const [events, setEvents] = useState<ContractEvent[]>([])
+  const [events, setEvents] = useState<ContractEvent[]>(() => {
+    if (typeof window === "undefined") return []
+    try {
+      const raw = localStorage.getItem(EV_STORAGE_KEY)
+      return raw ? (JSON.parse(raw) as ContractEvent[]) : []
+    } catch {
+      return []
+    }
+  })
   const [unreadCount, setUnreadCount] = useState(0)
 
+  console.log("[ctx] RENDER with transactions:", transactions.length, "events:", events.length)
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(TX_STORAGE_KEY, JSON.stringify(transactions.slice(0, MAX_STORED)))
+    } catch { /* quota exceeded, silently ignore */ }
+  }, [transactions])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(EV_STORAGE_KEY, JSON.stringify(events.slice(0, MAX_STORED)))
+    } catch { /* quota exceeded, silently ignore */ }
+  }, [events])
+
   const addTransaction = useCallback((tx: TransactionRecord) => {
-    console.log("[ctx] addTransaction:", tx.hash, tx.type)
-    setTransactions((prev) => [tx, ...prev])
+    console.log("[ctx] addTransaction CALLED:", tx.hash, tx.type)
+    setTransactions((prev) => {
+      console.log("[ctx] setTransactions prev.length:", prev.length, "adding:", tx.hash)
+      return [tx, ...prev]
+    })
     setCurrentTx(tx)
   }, [])
 

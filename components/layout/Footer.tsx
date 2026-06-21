@@ -6,7 +6,7 @@ import { Zap, GitBranch, AtSign, Globe } from "lucide-react"
 export function Footer() {
   return (
     <motion.footer
-      className="border-t border-border/40 bg-background/70 backdrop-blur-xl py-8 md:py-10"
+      className="border-t border-white/[0.06] bg-[#030712]/60 backdrop-blur-xl py-8 md:py-10"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -19,7 +19,7 @@ export function Footer() {
             className="flex items-center gap-2.5"
             whileHover={{ scale: 1.05 }}
           >
-            <div className="h-7 w-7 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+            <div className="h-7 w-7 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center">
               <Zap className="h-3.5 w-3.5 text-blue-400" />
             </div>
             <span className="font-semibold gradient-text text-sm">FreelancerPay</span>
@@ -51,7 +51,7 @@ export function Footer() {
               <motion.a
                 key={idx}
                 href="#"
-                className="h-8 w-8 rounded-lg bg-accent/50 border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-blue-500/40 transition-all"
+                className="h-8 w-8 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-muted-foreground hover:text-white hover:border-blue-400/30 hover:bg-blue-500/10 transition-all duration-200"
                 whileHover={{ scale: 1.15, y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >

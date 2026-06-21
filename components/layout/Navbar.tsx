@@ -33,7 +33,7 @@ export function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-white/75 dark:bg-[#0f1117]/75 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm"
+          ? "bg-[#030712]/80 backdrop-blur-xl border-b border-white/[0.06] shadow-lg shadow-black/20"
           : "bg-transparent",
       )}
       initial={{ y: -100 }}
@@ -45,16 +45,13 @@ export function Navbar() {
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2.5 font-bold text-lg group">
             <motion.div
-              className="h-8 w-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors"
+              className="h-8 w-8 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center group-hover:border-blue-400/30 transition-all duration-300"
               whileHover={{ rotate: [0, -8, 8, 0] }}
               transition={{ duration: 0.4 }}
             >
-              <Zap className="h-4 w-4 text-blue-500" />
+              <Zap className="h-4 w-4 text-blue-400" />
             </motion.div>
-            <span className={cn(
-              "hidden sm:inline font-semibold transition-colors",
-              scrolled ? "text-gray-900 dark:text-white" : "text-gray-900 dark:text-white",
-            )}>
+            <span className="hidden sm:inline font-semibold gradient-text">
               FreelancerPay
             </span>
           </Link>
@@ -67,10 +64,10 @@ export function Navbar() {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "gap-2 rounded-lg text-sm transition-all",
+                    "gap-2 rounded-lg text-sm transition-all duration-200",
                     pathname === link.href
-                      ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/15"
-                      : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-gray-800/30",
+                      ? "bg-gradient-to-r from-blue-500/15 to-purple-500/15 text-white border border-white/[0.06]"
+                      : "text-muted-foreground hover:text-white hover:bg-white/[0.04]",
                   )}
                 >
                   <link.icon className="h-3.5 w-3.5" />
@@ -104,7 +101,7 @@ export function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="md:hidden border-t border-gray-200/50 dark:border-gray-800/50 bg-white/95 dark:bg-[#0f1117]/95 backdrop-blur-xl p-4 space-y-1"
+            className="md:hidden border-t border-white/[0.06] bg-[#030712]/95 backdrop-blur-xl p-4 space-y-1"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -117,8 +114,8 @@ export function Navbar() {
                   className={cn(
                     "w-full justify-start gap-2",
                     pathname === link.href
-                      ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                      : "text-gray-500 dark:text-gray-400",
+                      ? "bg-gradient-to-r from-blue-500/15 to-purple-500/15 text-white"
+                      : "text-muted-foreground",
                   )}
                 >
                   <link.icon className="h-4 w-4" />

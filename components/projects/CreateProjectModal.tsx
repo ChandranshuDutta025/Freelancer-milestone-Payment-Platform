@@ -74,7 +74,7 @@ export function CreateProjectModal({ open, onOpenChange }: CreateProjectModalPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Project</DialogTitle>
+          <DialogTitle className="text-white">Create New Project</DialogTitle>
           <DialogDescription>
             Define your project milestones and budget
           </DialogDescription>
@@ -87,7 +87,7 @@ export function CreateProjectModal({ open, onOpenChange }: CreateProjectModalPro
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
           >
-            <Label htmlFor="title">Project Title</Label>
+            <Label htmlFor="title" className="text-white/80">Project Title</Label>
             <Input
               id="title"
               value={title}
@@ -102,13 +102,13 @@ export function CreateProjectModal({ open, onOpenChange }: CreateProjectModalPro
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-white/80">Description</Label>
             <textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe your project..."
-              className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="flex min-h-[80px] w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400/50 focus-visible:border-blue-400/30 backdrop-blur-sm transition-all duration-200 text-white"
             />
           </motion.div>
 
@@ -119,7 +119,7 @@ export function CreateProjectModal({ open, onOpenChange }: CreateProjectModalPro
             transition={{ delay: 0.15 }}
           >
             <div className="flex items-center justify-between">
-              <Label>Milestones</Label>
+              <Label className="text-white/80">Milestones</Label>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
                 <Button variant="outline" size="sm" onClick={addMilestone} className="gap-1">
                   <Plus className="h-3 w-3" />
@@ -137,14 +137,14 @@ export function CreateProjectModal({ open, onOpenChange }: CreateProjectModalPro
                   animate={{ opacity: 1, height: "auto", marginBottom: 8 }}
                   exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="border rounded-lg p-3 space-y-2 overflow-hidden"
+                  className="border border-white/10 rounded-xl p-3 space-y-2 overflow-hidden bg-white/[0.02]"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Milestone {index + 1}</span>
+                    <span className="text-sm font-medium text-white">Milestone {index + 1}</span>
                     {milestones.length > 1 && (
                       <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeMilestone(index)}>
-                          <Trash2 className="h-3 w-3 text-destructive" />
+                          <Trash2 className="h-3 w-3 text-red-400" />
                         </Button>
                       </motion.div>
                     )}
@@ -158,7 +158,7 @@ export function CreateProjectModal({ open, onOpenChange }: CreateProjectModalPro
                     placeholder="Description"
                     value={milestone.description}
                     onChange={(e) => updateMilestone(index, "description", e.target.value)}
-                    className="flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="flex min-h-[60px] w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400/50 focus-visible:border-blue-400/30 backdrop-blur-sm transition-all duration-200 text-white"
                   />
                   <Input
                     type="number"
@@ -180,7 +180,7 @@ export function CreateProjectModal({ open, onOpenChange }: CreateProjectModalPro
             </Button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button onClick={handleSubmit} disabled={isSubmitting || !title.trim()}>
+            <Button variant="gradient" onClick={handleSubmit} disabled={isSubmitting || !title.trim()}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isSubmitting ? "Creating..." : "Create Project"}
             </Button>

@@ -9,10 +9,10 @@ import { truncateAddress, formatTimestamp } from "@/lib/utils"
 import type { Project } from "@/types"
 import { HoverCard } from "@/components/ui/motion"
 
-const statusColors: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+const statusColors: Record<string, "default" | "secondary" | "destructive" | "outline" | "success" | "warning"> = {
   Open: "default",
-  InProgress: "secondary",
-  Completed: "outline",
+  InProgress: "warning",
+  Completed: "success",
   Cancelled: "destructive",
 }
 
@@ -25,11 +25,11 @@ interface ProjectCardProps {
 export function ProjectCard({ project, onViewDetails, onDelete }: ProjectCardProps) {
   return (
     <HoverCard>
-      <Card className="transition-colors">
+      <Card className="glass-card-hover">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <CardTitle className="text-lg">{project.title}</CardTitle>
+              <CardTitle className="text-lg text-white">{project.title}</CardTitle>
               <CardDescription className="line-clamp-2">{project.description}</CardDescription>
             </div>
             <Badge variant={statusColors[project.status] ?? "outline"}>{project.status}</Badge>
@@ -88,7 +88,7 @@ export function ProjectCard({ project, onViewDetails, onDelete }: ProjectCardPro
             <Button
               variant="ghost"
               size="sm"
-              className="w-full gap-2"
+              className="w-full gap-2 hover:bg-white/[0.06]"
               onClick={() => onViewDetails(project)}
             >
               View Details
@@ -103,7 +103,7 @@ export function ProjectCard({ project, onViewDetails, onDelete }: ProjectCardPro
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-2 text-red-500 border-red-200 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950"
+                className="gap-2 text-red-400 border-red-500/30 hover:bg-red-500/10"
                 onClick={() => onDelete(project)}
               >
                 Delete

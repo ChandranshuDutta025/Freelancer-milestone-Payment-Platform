@@ -7,17 +7,19 @@ import { FadeUp } from "@/components/ui/motion"
 export default function TransactionsPage() {
   return (
     <motion.div
-      className="container mx-auto px-4 md:px-6 py-8 space-y-6"
+      className="min-h-screen bg-[#030712]"
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
     >
-      <FadeUp className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
-        <p className="text-muted-foreground">Recent contract interactions and their status</p>
-      </FadeUp>
+      <div className="mx-auto max-w-7xl px-4 md:px-6 py-10 space-y-6">
+        <FadeUp className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight text-white">Transactions</h1>
+          <p className="text-muted-foreground">Recent contract interactions and their status</p>
+        </FadeUp>
 
-      <TransactionHistory />
+        <TransactionHistory />
+      </div>
     </motion.div>
   )
 }

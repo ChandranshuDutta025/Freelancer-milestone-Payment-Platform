@@ -48,7 +48,7 @@ export function WalletConnectButton() {
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-2 rounded-xl border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 hover:text-blue-200 transition-all"
+                className="gap-2 rounded-xl border-blue-500/30 bg-gradient-to-r from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 text-blue-300 hover:text-blue-200 transition-all duration-200"
               >
                 <motion.div
                   className="h-2 w-2 rounded-full bg-emerald-400"
@@ -60,7 +60,7 @@ export function WalletConnectButton() {
                 <ChevronDown className="h-3 w-3 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1117] shadow-lg w-52">
+            <DropdownMenuContent align="end" className="w-52">
               <DropdownMenuItem className="text-xs text-muted-foreground font-mono cursor-default" disabled>
                 {address.slice(0, 16)}...{address.slice(-8)}
               </DropdownMenuItem>
@@ -81,7 +81,7 @@ export function WalletConnectButton() {
                 </a>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={disconnect} className="text-destructive gap-2 cursor-pointer focus:text-destructive">
+              <DropdownMenuItem onClick={disconnect} className="text-red-400 gap-2 cursor-pointer focus:text-red-400">
                 <LogOut className="h-3.5 w-3.5" />
                 Disconnect
               </DropdownMenuItem>
@@ -100,7 +100,8 @@ export function WalletConnectButton() {
             <Button
               onClick={() => setModalOpen(true)}
               size="sm"
-              className="gap-2 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-medium transition-colors"
+              variant="gradient"
+              className="gap-2"
             >
               <Wallet className="h-3.5 w-3.5" />
               Connect Wallet

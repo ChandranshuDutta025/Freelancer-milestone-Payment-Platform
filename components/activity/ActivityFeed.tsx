@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -20,16 +20,15 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 import type { EventType } from "@/types"
-import { StaggerContainer, StaggerItemFast } from "@/components/ui/motion"
 
 const eventConfig: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  project_created: { label: "Project Created", icon: <FileCheck className="h-4 w-4" />, color: "text-blue-500" },
-  project_accepted: { label: "Project Accepted", icon: <UserPlus className="h-4 w-4" />, color: "text-green-500" },
-  milestone_funded: { label: "Milestone Funded", icon: <DollarSign className="h-4 w-4" />, color: "text-yellow-500" },
-  milestone_submitted: { label: "Milestone Submitted", icon: <Send className="h-4 w-4" />, color: "text-purple-500" },
-  milestone_approved: { label: "Milestone Approved", icon: <ThumbsUp className="h-4 w-4" />, color: "text-green-500" },
-  payment_released: { label: "Payment Released", icon: <CheckCircle className="h-4 w-4" />, color: "text-emerald-500" },
-  project_cancelled: { label: "Project Cancelled", icon: <XCircle className="h-4 w-4" />, color: "text-red-500" },
+  project_created: { label: "Project Created", icon: <FileCheck className="h-4 w-4" />, color: "text-blue-400" },
+  project_accepted: { label: "Project Accepted", icon: <UserPlus className="h-4 w-4" />, color: "text-emerald-400" },
+  milestone_funded: { label: "Milestone Funded", icon: <DollarSign className="h-4 w-4" />, color: "text-amber-400" },
+  milestone_submitted: { label: "Milestone Submitted", icon: <Send className="h-4 w-4" />, color: "text-purple-400" },
+  milestone_approved: { label: "Milestone Approved", icon: <ThumbsUp className="h-4 w-4" />, color: "text-emerald-400" },
+  payment_released: { label: "Payment Released", icon: <CheckCircle className="h-4 w-4" />, color: "text-emerald-400" },
+  project_cancelled: { label: "Project Cancelled", icon: <XCircle className="h-4 w-4" />, color: "text-red-400" },
 }
 
 const eventTypes: EventType[] = [
@@ -44,6 +43,7 @@ const eventTypes: EventType[] = [
 
 export function ActivityFeed() {
   const { events, unreadCount, markAllRead } = useEvents()
+  console.log("[ActivityFeed] render, events.length:", events.length)
   const [filter, setFilter] = useState<EventType | "all">("all")
 
   const filtered = filter === "all" ? events : events.filter((e) => e.type === filter)
@@ -52,8 +52,8 @@ export function ActivityFeed() {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <Activity className="h-5 w-5 text-blue-400" />
             Activity Feed
             {unreadCount > 0 && (
               <motion.div
@@ -89,7 +89,7 @@ export function ActivityFeed() {
           transition={{ duration: 0.3 }}
         >
           <Button
-            variant={filter === "all" ? "default" : "outline"}
+            variant={filter === "all" ? "gradient" : "outline"}
             size="sm"
             onClick={() => setFilter("all")}
             className="gap-1"
@@ -100,7 +100,7 @@ export function ActivityFeed() {
           {eventTypes.map((type) => (
             <motion.div key={type} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
-                variant={filter === type ? "default" : "outline"}
+                variant={filter === type ? "gradient" : "outline"}
                 size="sm"
                 onClick={() => setFilter(type)}
               >
@@ -124,53 +124,47 @@ export function ActivityFeed() {
             </p>
           </motion.div>
         ) : (
-          <StaggerContainer className="space-y-1">
-            <AnimatePresence mode="popLayout">
-              {filtered.map((event) => {
-                const cfg = eventConfig[event.type]
-                return (
-                  <StaggerItemFast key={event.id}>
-                    <motion.div
-                      layout
-                      className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
-                    >
-                      <motion.div
-                        className={`mt-0.5 ${cfg?.color ?? ""}`}
-                        whileHover={{ rotate: [0, -10, 10, 0] }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {cfg?.icon ?? <Activity className="h-4 w-4" />}
-                      </motion.div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-medium">{cfg?.label ?? event.type}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {formatTimestamp(event.timestamp)}
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          Project #{event.projectId}
-                          {event.milestoneId ? `, Milestone #${event.milestoneId}` : ""}
-                          {" · "}
-                          {truncateAddress(event.walletAddress)}
-                          {event.amount ? ` · ${event.amount} XLM` : ""}
-                        </p>
-                      </div>
-                      <motion.a
-                        href={`https://stellar.expert/explorer/testnet/tx/${event.txHash}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs text-muted-foreground hover:text-primary shrink-0"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        View
-                      </motion.a>
-                    </motion.div>
-                  </StaggerItemFast>
-                )
-              })}
-            </AnimatePresence>
-          </StaggerContainer>
+          <div className="space-y-1">
+            {filtered.map((event) => {
+              const cfg = eventConfig[event.type]
+              return (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/[0.04] transition-colors border border-transparent hover:border-white/[0.06]"
+                >
+                  <div className={`mt-0.5 p-1.5 rounded-lg bg-white/[0.04] ${cfg?.color ?? ""}`}>
+                    {cfg?.icon ?? <Activity className="h-4 w-4" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-medium text-white">{cfg?.label ?? event.type}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatTimestamp(event.timestamp)}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Project #{event.projectId}
+                      {event.milestoneId ? `, Milestone #${event.milestoneId}` : ""}
+                      {" · "}
+                      {truncateAddress(event.walletAddress)}
+                      {event.amount ? ` · ${event.amount} XLM` : ""}
+                    </p>
+                  </div>
+                  <a
+                    href={`https://stellar.expert/explorer/testnet/tx/${event.txHash}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-muted-foreground hover:text-blue-400 shrink-0 transition-colors"
+                  >
+                    View
+                  </a>
+                </motion.div>
+              )
+            })}
+          </div>
         )}
       </CardContent>
     </Card>

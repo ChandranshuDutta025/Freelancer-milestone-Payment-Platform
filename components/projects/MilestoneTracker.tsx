@@ -19,12 +19,12 @@ import { toast } from "sonner"
 
 import type { Milestone, Project } from "@/types"
 
-const statusConfig: Record<string, { label: string; color: "default" | "secondary" | "outline" | "destructive"; icon: React.ReactNode }> = {
-  Pending: { label: "Pending", color: "outline", icon: <Circle className="h-3 w-3" /> },
-  InProgress: { label: "Funded", color: "secondary", icon: <DollarSign className="h-3 w-3" /> },
-  Submitted: { label: "Submitted", color: "default", icon: <Send className="h-3 w-3" /> },
-  Approved: { label: "Approved", color: "default", icon: <ThumbsUp className="h-3 w-3" /> },
-  Paid: { label: "Paid", color: "outline", icon: <CheckCircle className="h-3 w-3 text-green-500" /> },
+const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "outline" | "destructive" | "success" | "warning"; icon: React.ReactNode }> = {
+  Pending: { label: "Pending", variant: "secondary", icon: <Circle className="h-3 w-3" /> },
+  InProgress: { label: "Funded", variant: "warning", icon: <DollarSign className="h-3 w-3" /> },
+  Submitted: { label: "Submitted", variant: "default", icon: <Send className="h-3 w-3" /> },
+  Approved: { label: "Approved", variant: "default", icon: <ThumbsUp className="h-3 w-3" /> },
+  Paid: { label: "Paid", variant: "success", icon: <CheckCircle className="h-3 w-3" /> },
 }
 
 interface MilestoneTrackerProps {
@@ -102,7 +102,7 @@ export function MilestoneTracker({ project }: MilestoneTrackerProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
           >
-            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full rounded-xl" />
           </motion.div>
         ))}
       </div>
@@ -123,18 +123,18 @@ export function MilestoneTracker({ project }: MilestoneTrackerProps) {
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">Progress</span>
           <motion.span
-            className="font-medium"
+            className="font-medium text-white"
             key={`${progress}-${total}`}
             initial={{ scale: 1.2, color: "hsl(210 100% 66%)" }}
-            animate={{ scale: 1, color: "hsl(var(--foreground))" }}
+            animate={{ scale: 1, color: "rgb(248 250 252)" }}
             transition={{ duration: 0.3 }}
           >
             {progress}/{total} paid ({progressPct}%)
           </motion.span>
         </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
+        <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-primary rounded-full"
+            className="h-full gradient-primary rounded-full"
             initial={{ width: 0 }}
             whileInView={{ width: `${progressPct}%` }}
             viewport={{ once: true }}
@@ -157,14 +157,14 @@ export function MilestoneTracker({ project }: MilestoneTrackerProps) {
               viewport={{ once: true }}
               transition={{ duration: 0.3, delay: idx * 0.06 }}
             >
-              <AccordionItem value={`m-${milestone.id}`}>
+              <AccordionItem value={`m-${milestone.id}`} className="border-white/[0.06]">
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3 flex-1">
-                    <Badge variant={cfg.color} className="gap-1">
+                    <Badge variant={cfg.variant} className="gap-1">
                       {cfg.icon}
                       {cfg.label}
                     </Badge>
-                    <span className="text-sm font-medium">{milestone.title}</span>
+                    <span className="text-sm font-medium text-white">{milestone.title}</span>
                     <span className="text-sm text-muted-foreground ml-auto">{formatXlm(milestone.amount)} XLM</span>
                   </div>
                 </AccordionTrigger>
@@ -179,7 +179,7 @@ export function MilestoneTracker({ project }: MilestoneTrackerProps) {
                   >
                     {milestone.status === "Pending" && isClient && (
                       <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                        <Button size="sm" onClick={() => handleDeposit(milestone)} disabled={isPending} className="gap-1">
+                        <Button size="sm" variant="gradient" onClick={() => handleDeposit(milestone)} disabled={isPending} className="gap-1">
                           {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <DollarSign className="h-3 w-3" />}
                           Deposit {formatXlm(milestone.amount)} XLM
                         </Button>
@@ -188,7 +188,7 @@ export function MilestoneTracker({ project }: MilestoneTrackerProps) {
 
                     {milestone.status === "InProgress" && isFreelancer && (
                       <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                        <Button size="sm" onClick={() => handleSubmit(milestone)} disabled={isPending} className="gap-1">
+                        <Button size="sm" variant="gradient" onClick={() => handleSubmit(milestone)} disabled={isPending} className="gap-1">
                           {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
                           Submit Work
                         </Button>
@@ -197,7 +197,7 @@ export function MilestoneTracker({ project }: MilestoneTrackerProps) {
 
                     {milestone.status === "Submitted" && isClient && (
                       <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                        <Button size="sm" onClick={() => handleApprove(milestone)} disabled={isPending} className="gap-1">
+                        <Button size="sm" variant="gradient" onClick={() => handleApprove(milestone)} disabled={isPending} className="gap-1">
                           {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <ThumbsUp className="h-3 w-3" />}
                           Approve
                         </Button>
@@ -206,7 +206,7 @@ export function MilestoneTracker({ project }: MilestoneTrackerProps) {
 
                     {milestone.status === "Approved" && (
                       <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                        <Button size="sm" onClick={() => handleRelease(milestone)} disabled={isPending} className="gap-1">
+                        <Button size="sm" variant="gradient" onClick={() => handleRelease(milestone)} disabled={isPending} className="gap-1">
                           {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <DollarSign className="h-3 w-3" />}
                           Release Payment
                         </Button>
@@ -219,7 +219,7 @@ export function MilestoneTracker({ project }: MilestoneTrackerProps) {
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
-                        <Badge variant="outline" className="gap-1 text-green-500">
+                        <Badge variant="success" className="gap-1">
                           <CheckCircle className="h-3 w-3" />
                           Payment Released
                         </Badge>

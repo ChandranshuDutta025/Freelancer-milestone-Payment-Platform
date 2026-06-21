@@ -16,9 +16,9 @@ export function WalletDashboard() {
 
   if (isConnecting) {
     return (
-      <Card className="border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#0f1117] shadow-sm">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-base text-white">
             <Wallet className="h-4 w-4 text-blue-400" />
             Wallet
           </CardTitle>
@@ -34,9 +34,9 @@ export function WalletDashboard() {
 
   if (!isConnected) {
     return (
-      <Card className="border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#0f1117] shadow-sm">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-base text-white">
             <Wallet className="h-4 w-4 text-blue-400" />
             Wallet
           </CardTitle>
@@ -50,7 +50,7 @@ export function WalletDashboard() {
             transition={{ duration: 0.4 }}
           >
             <motion.div
-              className="h-14 w-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center"
+              className="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center"
               whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
             >
               <Wallet className="h-7 w-7 text-blue-400 opacity-60" />
@@ -71,10 +71,10 @@ export function WalletDashboard() {
   }
 
   return (
-    <Card className="border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#0f1117] shadow-sm">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span className="flex items-center gap-2 text-base">
+          <span className="flex items-center gap-2 text-base text-white">
             <Wallet className="h-4 w-4 text-blue-400" />
             Wallet
           </span>
@@ -83,7 +83,7 @@ export function WalletDashboard() {
               variant="outline"
               size="sm"
               onClick={disconnect}
-              className="gap-1.5 border-destructive/30 text-destructive hover:bg-destructive/10 rounded-lg text-xs"
+              className="gap-1.5 border-red-500/30 text-red-400 hover:bg-red-500/10 rounded-xl text-xs"
             >
               <LogOut className="h-3 w-3" />
               Disconnect
@@ -114,7 +114,7 @@ export function WalletDashboard() {
         ].map((item, idx) => (
           <motion.div
             key={item.label}
-            className="flex items-center justify-between p-3 rounded-xl bg-accent/30 text-sm"
+            className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm"
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: idx * 0.1 }}
@@ -134,7 +134,7 @@ export function WalletDashboard() {
           transition={{ duration: 0.3, delay: 0.2 }}
         >
           <p className="text-xs text-muted-foreground px-1">Wallet Address</p>
-          <div className="flex items-center gap-2 bg-accent/30 p-3 rounded-xl">
+          <div className="flex items-center gap-2 bg-white/[0.04] border border-white/[0.06] p-3 rounded-xl">
             <code className="text-xs break-all flex-1 text-muted-foreground font-mono leading-relaxed">{address}</code>
             <div className="flex flex-col gap-1 shrink-0">
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>

@@ -121,6 +121,10 @@ export const useWalletStore = create<WalletState>((set, get) => ({
 
     try {
       const { address } = await StellarWalletsKit.authModal();
+      const id = (StellarWalletsKit.selectedModule as any)?.id ?? null;
+      if (id && typeof window !== 'undefined') {
+        localStorage.setItem('lastUsedWalletId', id);
+      }
       set({
         address,
         publicKey: address,
