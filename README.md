@@ -1,5 +1,6 @@
 ![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/2bf107e2a2d59b699003b8ff08e2a5cbeeeb8df9/Screenshot%202026-06-21%20200058.png)
-![image alt]()
+![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/5de883e2af214fd92976e56dd29e9ce606bda8a5/Screenshot%202026-06-21%20200113.png)
+![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/5de883e2af214fd92976e56dd29e9ce606bda8a5/Screenshot%202026-06-21%20200200.png)
 
 # Freelancer Milestone Payment Platform
 
