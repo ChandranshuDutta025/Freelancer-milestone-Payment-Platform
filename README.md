@@ -1,4 +1,5 @@
-![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/c68868591155ed4216b342ce289b2dedfce85716/Screenshot%202026-06-21%20015719.png)
+![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/c68868591155ed4216b342ce289b2dedfce85716/Screenshot%202026-06-21%20013629.png)
+
 # Freelancer Milestone Payment Platform
 
 A decentralized milestone-based payment platform for freelancers built on the **Stellar** blockchain using **Soroban smart contracts**. Clients can create projects with milestones, deposit funds in escrow, and release payments automatically upon milestone approval.
@@ -28,7 +29,9 @@ A decentralized milestone-based payment platform for freelancers built on the **
 - **Data Fetching:** TanStack Query (React Query)
 - **Icons:** lucide-react
 - **Theme:** next-themes
-![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/c68868591155ed4216b342ce289b2dedfce85716/Screenshot%202026-06-21%20013629.png)
+
+- ![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/c68868591155ed4216b342ce289b2dedfce85716/Screenshot%202026-06-21%20015719.png)
+
 
 ## Setup Instructions
 
