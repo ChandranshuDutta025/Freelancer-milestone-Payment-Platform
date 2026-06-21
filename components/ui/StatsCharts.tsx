@@ -66,7 +66,7 @@ const CustomTooltip = ({ active, payload, label }: {
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="glass-card rounded-xl px-4 py-3 border border-border/60 shadow-2xl text-sm">
+      <div className="bg-white dark:bg-[#0f1117] border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 shadow-2xl text-sm">
         <p className="text-muted-foreground mb-1 font-medium">{label}</p>
         {payload.map((p) => (
           <p key={p.name} style={{ color: p.color }} className="font-semibold">
@@ -147,7 +147,7 @@ export function CategoryPieChart() {
             if (active && payload && payload.length) {
               const d = payload[0]
               return (
-                <div className="glass-card rounded-xl px-3 py-2 border border-border/60 text-sm">
+                <div className="bg-white dark:bg-[#0f1117] border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 shadow-lg text-sm">
                   <p style={{ color: d.payload.fill ?? "#fff" }} className="font-semibold">{d.name}: {d.value}%</p>
                 </div>
               )

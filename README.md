@@ -1,122 +1,127 @@
 # Freelancer Milestone Payment Platform
 
-A decentralized milestone-based payment platform for freelancers built on the **Stellar** blockchain using **Soroban smart contracts**. Clients can create projects with milestones, deposit funds in escrow, and release payments automatically upon milestone approval.
+> **Live Demo:** [https://ai-resume-builder-eta-nine.vercel.app](https://ai-resume-builder-eta-nine.vercel.app)
 
-## Features
-
-- **Multi-Wallet Support** - Connect with Freighter, xBull, Albedo, LOBSTR, Rabet, and Hana via StellarWalletsKit
-- **Smart Contract Escrow** - Funds are held in a Soroban smart contract until milestones are approved
-- **Milestone Management** - Create projects with multiple milestones, each with its own budget
-- **Role-Based Actions** - Clients deposit/approve, freelancers accept/submit
-- **Real-Time Updates** - Automatic polling and event-based state synchronization
-- **Transaction Tracking** - Monitor transaction status (pending/success/failed) with explorer links
-- **Activity Feed** - Real-time event stream of all contract interactions
-- **Dark Mode** - Full dark/light theme support with next-themes and shadcn/ui
-- **Responsive Design** - Mobile-first layout with responsive navigation
+A decentralized milestone-based payment platform for freelancers built on the **Stellar** blockchain using **Soroban smart contracts**. Clients create projects with milestones, deposit funds in escrow, and release payments automatically upon milestone approval.
 
 ## Tech Stack
 
-- **Framework:** Next.js 15 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS v4
-- **UI Library:** shadcn/ui
-- **Blockchain:** Stellar / Soroban
-- **Wallet:** StellarWalletsKit
-- **SDKs:** `@stellar/stellar-sdk`, `soroban-sdk`
-- **State:** Zustand
-- **Data Fetching:** TanStack Query (React Query)
-- **Icons:** lucide-react
-- **Theme:** next-themes
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | Next.js 15 (App Router, Turbopack) |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS v4 + shadcn/ui |
+| **Animation** | Framer Motion |
+| **State** | Zustand |
+| **Data Fetching** | TanStack Query |
+| **Blockchain** | Stellar / Soroban (soroban-sdk 22.x) |
+| **SDKs** | `@stellar/stellar-sdk` v13, StellarWalletsKit |
+| **Wallets** | Freighter, xBull, Albedo, LOBSTR, Rabet, Hana |
 
-## Setup Instructions
+## Project Structure
 
-### Prerequisites
-
-- Node.js 20+
-- Rust (for smart contract development)
-- Stellar CLI (`stellar`)
-
-### 1. Clone and Install
-
-```bash
-git clone <repository-url>
-cd freelancer-milestone-payment
-npm install
+```
+ai-resume-builder/
+├── app/
+│   ├── page.tsx                  # Landing page
+│   ├── layout.tsx                # Root layout (providers, navbar)
+│   ├── globals.css               # Tailwind + CSS variables (light/dark)
+│   ├── page-transition.tsx       # AnimatePresence page wrapper
+│   ├── query-provider.tsx        # TanStack Query provider
+│   ├── activity/                 # Activity feed page
+│   ├── app-page/                 # Main app / project listing
+│   ├── dashboard/                # Dashboard with charts
+│   └── transactions/             # Transaction history
+│
+├── components/
+│   ├── activity/ActivityFeed.tsx
+│   ├── layout/
+│   │   ├── Navbar.tsx            # Fixed, scroll-aware navbar
+│   │   └── Footer.tsx
+│   ├── projects/
+│   │   ├── CreateProjectModal.tsx
+│   │   ├── MilestoneTracker.tsx
+│   │   └── ProjectCard.tsx
+│   ├── theme/
+│   │   ├── ThemeProvider.tsx      # next-themes wrapper
+│   │   └── ThemeToggle.tsx       # Animated sun/moon toggle
+│   ├── transactions/TransactionHistory.tsx
+│   ├── ui/                       # shadcn/ui + custom motion wrappers
+│   │   ├── motion.tsx            # FadeUp, HoverCard, StaggerContainer, etc.
+│   │   ├── MouseFollower.tsx     # Premium blue glow follower
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── dialog.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   ├── popover.tsx
+│   │   ├── select.tsx
+│   │   ├── separator.tsx
+│   │   ├── skeleton.tsx
+│   │   ├── sonner.tsx
+│   │   ├── table.tsx
+│   │   └── tabs.tsx
+│   └── wallet/
+│       ├── WalletConnectButton.tsx
+│       ├── WalletDashboard.tsx
+│       └── WalletModal.tsx        # Multi-wallet selection modal
+│
+├── contracts/
+│   └── freelancer-milestone/
+│       ├── Cargo.toml
+│       └── src/
+│           ├── lib.rs            # Soroban smart contract (13 functions)
+│           └── test.rs           # 6 passing tests
+│
+├── hooks/
+│   ├── useContract.ts            # All contract read/write + mutations
+│   ├── useBalances.ts            # Horizon XLM balance fetch
+│   ├── useEvents.ts             # Real-time event polling (10s)
+│   └── useProjects.ts           # Project listing helpers
+│
+├── lib/
+│   ├── framer-variants.ts        # Animation variants
+│   ├── stellar.ts                # Stellar RPC + Horizon config
+│   └── utils.ts                  # cn() helper
+│
+├── scripts/
+│   ├── deploy.ts                 # Contract deployment script
+│   └── interact.ts               # Contract interaction script
+│
+├── store/
+│   ├── walletStore.ts            # Zustand wallet state
+│   ├── transactionStore.ts
+│   ├── eventStore.ts
+│   └── projectStore.ts
+│
+├── types/
+│   └── index.ts                  # TypeScript type definitions
+│
+├── public/
+├── .env                          # NEXT_PUBLIC_CONTRACT_ID
+├── .env.example
+├── .vercelignore
+├── vercel.json
+├── next.config.ts
+├── package.json
+├── tailwind.config.ts
+├── tsconfig.json
+└── README.md
 ```
 
-### 2. Environment Variables
+## Deployed Contract
 
-Copy `.env.example` to `.env`:
+| Property | Value |
+|----------|-------|
+| **Contract ID** | `CBHBYWB6G3YC4Q56RUEXIMKD6FRUCQMAHUQKKMH2LY45KYVJZ7XMVGK4` |
+| **Network** | Stellar Testnet |
+| **RPC Endpoint** | `https://soroban-testnet.stellar.org` |
+| **Explorer** | [View on stellar.expert](https://stellar.expert/explorer/testnet/contract/CBHBYWB6G3YC4Q56RUEXIMKD6FRUCQMAHUQKKMH2LY45KYVJZ7XMVGK4) |
+| **Freelancer Pay** | [Stellar Expert](https://stellar.expert/explorer/testnet/account/GBUBVSW6QMR2LYVE4NL34P5Q3RIXXMA2WTR3NOIFPPAHOTD4QJBAPD7P) |
 
-```bash
-cp .env.example .env
-```
+> ⚠️ The contract is deployed on **Testnet**. Fund your wallet via the [Stellar Lab Friendbot](https://lab.stellar.org/account/create) before interacting.
 
-### 3. Start Development Server
-
-```bash
-npm run dev
-```
-
-## Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_STELLAR_NETWORK` | Stellar network (testnet/mainnet) | `testnet` |
-| `NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE` | Network passphrase | `Test SDF Network ; September 2015` |
-| `NEXT_PUBLIC_STELLAR_RPC_URL` | Soroban RPC endpoint | `https://soroban-testnet.stellar.org` |
-| `NEXT_PUBLIC_CONTRACT_ID` | Deployed contract ID | (set after deployment) |
-| `STELLAR_ACCOUNT` | CLI account name for deployment | `freelancer-admin` |
-
-## Wallet Setup
-
-1. Install one of the supported wallet extensions:
-   - [Freighter](https://freighter.app/)
-   - [xBull](https://xbull.app/)
-   - [Albedo](https://albedo.link/)
-   - [LOBSTR](https://lobstr.co/)
-   - [Rabet](https://rabet.io/)
-   - [Hana](https://hanawallet.io/)
-
-2. Switch to **Testnet** in your wallet settings
-3. Fund your account using the [Stellar Lab Friendbot](https://lab.stellar.org/account/create) (testnet only)
-
-## Contract Deployment
-
-### Prerequisites
-
-Install the Stellar CLI:
-
-```bash
-cargo install stellar-cli
-```
-
-### Deploy to Testnet
-
-```bash
-# Ensure your .env is configured
-STELLAR_ACCOUNT=freelancer-admin npm run deploy
-```
-
-Or manually:
-
-```bash
-# Build the contract
-cd contracts/freelancer-milestone
-stellar contract build
-
-# Deploy to testnet
-stellar contract deploy \
-  --wasm target/wasm32v1-none/release/freelancer_milestone.wasm \
-  --ignore-checks \
-  --alias freelancer-milestone \
-  --source <YOUR-KEY> \
-  --network testnet
-
-# Save the returned CONTRACT_ID to .env as NEXT_PUBLIC_CONTRACT_ID
-```
-
-### Contract Functions
+## Contract Functions
 
 | Function | Description | Auth |
 |----------|-------------|------|
@@ -127,81 +132,102 @@ stellar contract deploy \
 | `approve_milestone` | Client approves milestone | Client |
 | `release_payment` | Release payment to freelancer | Anyone |
 | `cancel_project` | Client cancels an open project | Client |
-| `get_project` | Read project details | - |
-| `get_milestone` | Read milestone details | - |
-| `get_client_projects` | Get all project IDs for a client | - |
-| `get_freelancer_projects` | Get all project IDs for a freelancer | - |
+| `get_project` | Read project details | — |
+| `get_milestone` | Read milestone details | — |
+| `get_client_projects` | Get all project IDs for a client | — |
+| `get_freelancer_projects` | Get all project IDs for a freelancer | — |
+| `get_project_milestones` | Get milestone IDs for a project | — |
+| `get_project_count` | Total number of projects | — |
 
-## Running Locally
+## Features
+
+- **Multi-Wallet Support** — Connect with Freighter, xBull, Albedo, LOBSTR, Rabet, or Hana
+- **Smart Contract Escrow** — Funds held in Soroban contract until milestone approval
+- **Milestone Management** — Create projects with multiple milestones, each with its own budget
+- **Role-Based Actions** — Clients deposit/approve, freelancers accept/submit
+- **Real-Time Updates** — Event polling via Soroban RPC (10s interval)
+- **Transaction Tracking** — Pending → success/failed with explorer links
+- **Premium UI** — Light/dark themes, framer-motion animations, magnetic buttons, mouse-following glow
+- **Responsive** — Mobile-first with scroll-aware navbar
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- Rust (for smart contract development)
+- Stellar CLI (`cargo install stellar-cli`)
+- A Stellar wallet (Freighter recommended)
+
+### Install & Run
 
 ```bash
-# Development
-npm run dev
+git clone <repository-url>
+cd ai-resume-builder
+npm install
 
-# Build
+# Copy env and set your values
+cp .env.example .env
+
+# Start dev server
+npm run dev
+```
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_STELLAR_NETWORK` | Network name | `testnet` |
+| `NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE` | Network passphrase | `Test SDF Network ; September 2015` |
+| `NEXT_PUBLIC_STELLAR_RPC_URL` | Soroban RPC endpoint | `https://soroban-testnet.stellar.org` |
+| `NEXT_PUBLIC_CONTRACT_ID` | Deployed contract ID | `CBHBYWB6G3YC4Q56RUEXIMKD6FRUCQMAHUQKKMH2LY45KYVJZ7XMVGK4` |
+
+### Build & Test
+
+```bash
+# Frontend
 npm run build
 
-# Lint
-npm run lint
+# Smart contract
+cd contracts/freelancer-milestone
+cargo test                    # 6 tests
+stellar contract build        # 13.7 KB WASM
 ```
 
 ## Deployment
 
-### Deploy to Vercel
+### Vercel (Frontend)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+The app is deployed at [https://ai-resume-builder-eta-nine.vercel.app](https://ai-resume-builder-eta-nine.vercel.app).
 
-1. Push to GitHub
-2. Import project to Vercel
-3. Add environment variables from `.env.example`
-4. Set `NEXT_PUBLIC_CONTRACT_ID` to your deployed contract ID
-5. Deploy
-
-### Build for Production
+To redeploy:
 
 ```bash
-npm run build
-npm start
+npx vercel --prod
 ```
 
-## Contract Address
+### Soroban (Contract)
 
+```bash
+# Build WASM
+cd contracts/freelancer-milestone
+stellar contract build
+
+# Deploy (testnet)
+stellar contract deploy \
+  --wasm target/wasm32v1-none/release/freelancer_milestone.wasm \
+  --ignore-checks \
+  --alias freelancer-milestone \
+  --source <YOUR-KEY> \
+  --network testnet
 ```
-CONTRACT_ADDRESS_HERE
-```
 
-## Example Transaction Hash
+## Commit History
 
-```
-TRANSACTION_HASH_HERE
-```
-
-## Commit Plan
-
-### Commit 1: Project Initialization and Wallet Integration
-- Next.js 15 setup with TypeScript and Tailwind
-- StellarWalletsKit integration with multi-wallet support
-- Zustand stores for wallet, transactions, events, and projects
-- Wallet dashboard, connect/disconnect UI
-
-### Commit 2: Smart Contract Deployment and Frontend Integration
-- Soroban smart contract (create/accept/submit/approve/release)
-- Contract deployment scripts
-- React Query hooks for contract interactions
-- Create project modal, milestone tracker, project cards
-
-### Commit 3: Real-Time Events and Transaction Tracking
-- Event polling system via Soroban RPC
-- Activity feed with event filtering
-- Transaction history with status tracking
-- Explorer links and automatic updates
-
-### Commit 4: UI Polish and Documentation
-- Dark mode with next-themes
-- Responsive layout and mobile navigation
-- Toast notifications with sonner
-- Skeleton loaders and empty states
-- Complete README with setup instructions
+1. **Project Initialization & Wallet** — Next.js 15, StellarWalletsKit, multi-wallet, Zustand stores, wallet UI
+2. **Smart Contract & Integration** — Soroban contract (13 functions), deployment scripts, React Query hooks, project modals
+3. **Real-Time Events** — Event polling via Soroban RPC, activity feed, transaction history with status tracking
+4. **UI Polish** — Dark/light themes, framer-motion animations, responsive layout, toast notifications, landing page redesign
 
 ## License
 

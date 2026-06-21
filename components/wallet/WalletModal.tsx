@@ -1,10 +1,12 @@
 "use client"
 
+import { motion, AnimatePresence } from "framer-motion"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useWallet } from "@/hooks/useWallet"
 import { Wallet, ExternalLink, AlertCircle } from "lucide-react"
 import { useState } from "react"
+import { StaggerContainer, StaggerItemFast } from "@/components/ui/motion"
 
 const walletIcons: Record<string, string> = {
   freighter: "🔵",
@@ -61,43 +63,66 @@ export function WalletModal({ open, onOpenChange }: WalletModalProps) {
 
         <div className="space-y-2 py-4">
           {wallets.length === 0 ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground p-4 border rounded-lg">
+            <motion.div
+              className="flex items-center gap-2 text-sm text-muted-foreground p-4 border rounded-lg"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
               <AlertCircle className="h-4 w-4" />
               No wallets detected. Please install a Stellar wallet extension.
-            </div>
+            </motion.div>
           ) : (
-            wallets.map((wallet) => {
-              const id = wallet.id?.toLowerCase() ?? ""
-              const isConnecting = connecting === id
-              return (
-                <Button
-                  key={wallet.id}
-                  variant="outline"
-                  className="w-full justify-start gap-3 h-14"
-                  onClick={() => handleConnect(id)}
-                  disabled={isConnecting}
-                >
-                  <span className="text-xl">{walletIcons[id] ?? "💳"}</span>
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium">
-                      {walletNames[id] ?? wallet.name ?? "Unknown Wallet"}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {isConnecting ? "Connecting..." : "Connect via browser extension"}
-                    </span>
-                  </div>
-                  <ExternalLink className="ml-auto h-4 w-4 text-muted-foreground" />
-                </Button>
-              )
-            })
+            <StaggerContainer className="space-y-2">
+              {wallets.map((wallet) => {
+                const id = wallet.id?.toLowerCase() ?? ""
+                const isConnecting = connecting === id
+                return (
+                  <StaggerItemFast key={wallet.id}>
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start gap-3 h-14"
+                        onClick={() => handleConnect(id)}
+                        disabled={isConnecting}
+                      >
+                        <motion.span
+                          className="text-xl"
+                          animate={isConnecting ? { rotate: [0, 360] } : {}}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >
+                          {walletIcons[id] ?? "💳"}
+                        </motion.span>
+                        <div className="flex flex-col items-start">
+                          <span className="font-medium">
+                            {walletNames[id] ?? wallet.name ?? "Unknown Wallet"}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {isConnecting ? "Connecting..." : "Connect via browser extension"}
+                          </span>
+                        </div>
+                        <ExternalLink className="ml-auto h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </motion.div>
+                  </StaggerItemFast>
+                )
+              })}
+            </StaggerContainer>
           )}
 
-          {error && (
-            <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 p-3 rounded-lg">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 p-3 rounded-lg"
+                initial={{ opacity: 0, y: -8, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -8, height: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span>{error}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </DialogContent>
     </Dialog>

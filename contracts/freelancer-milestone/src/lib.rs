@@ -95,6 +95,7 @@ const MLS_SUBMITTED: Symbol = symbol_short!("mls_sub");
 const MLS_APPROVED: Symbol = symbol_short!("mls_app");
 const PAY_RELEASED: Symbol = symbol_short!("pay_rel");
 const PRJ_CANCELLED: Symbol = symbol_short!("prj_can");
+const PRJ_DELETED: Symbol = symbol_short!("prj_del");
 
 #[contractimpl]
 impl FreelancerMilestone {
@@ -114,8 +115,8 @@ impl FreelancerMilestone {
             .unwrap_or(0);
         let project_id = count + 1;
 
-        for milestone in milestones.iter() {
-            let ms_id = project_id * 1000 + 1;
+        for (i, milestone) in milestones.iter().enumerate() {
+            let ms_id = project_id * 1000 + 1 + i as u64;
             let ms = Milestone {
                 id: ms_id,
                 project_id,
@@ -297,6 +298,63 @@ impl FreelancerMilestone {
 
         env.events()
             .publish((PAY_RELEASED, project_id, milestone_id), milestone.amount);
+    }
+
+    pub fn delete_project(env: Env, client: Address, project_id: u64) {
+        client.require_auth();
+
+        let project = Self::get_project_or_err(&env, project_id);
+
+        if project.client != client {
+            panic!("Unauthorized");
+        }
+
+        env.storage().instance().remove(&DataKey::Project(project_id));
+
+        for i in 0..project.total_milestones {
+            let ms_id = project_id * 1000 + 1 + i as u64;
+            env.storage()
+                .instance()
+                .remove(&DataKey::Milestone(project_id, ms_id));
+        }
+
+        let curr: Vec<u64> = env
+            .storage()
+            .instance()
+            .get(&DataKey::ClientProjects(client.clone()))
+            .unwrap_or_else(|| Vec::new(&env));
+        let mut filtered: Vec<u64> = Vec::new(&env);
+        for id in curr.iter() {
+            if id != project_id {
+                filtered.push_back(id);
+            }
+        }
+        env.storage()
+            .instance()
+            .set(&DataKey::ClientProjects(client.clone()), &filtered);
+
+        if let Some(ref freelancer) = project.freelancer {
+            let fl_projects: Vec<u64> = env
+                .storage()
+                .instance()
+                .get(&DataKey::FreelancerProjects(freelancer.clone()))
+                .unwrap_or_else(|| Vec::new(&env));
+            let mut filtered_fl: Vec<u64> = Vec::new(&env);
+            for id in fl_projects.iter() {
+                if id != project_id {
+                    filtered_fl.push_back(id);
+                }
+            }
+            env.storage()
+                .instance()
+                .set(
+                    &DataKey::FreelancerProjects(freelancer.clone()),
+                    &filtered_fl,
+                );
+        }
+
+        env.events()
+            .publish((PRJ_DELETED, client, project_id), ());
     }
 
     pub fn cancel_project(env: Env, project_id: u64) {
