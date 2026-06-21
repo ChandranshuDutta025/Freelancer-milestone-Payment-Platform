@@ -1,3 +1,6 @@
+![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/2bf107e2a2d59b699003b8ff08e2a5cbeeeb8df9/Screenshot%202026-06-21%20200058.png)
+![image alt]()
+
 # Freelancer Milestone Payment Platform
 
 > **Live Demo:** [https://ai-resume-builder-eta-nine.vercel.app](https://ai-resume-builder-eta-nine.vercel.app)
