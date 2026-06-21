@@ -1,4 +1,4 @@
-![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/c68868591155ed4216b342ce289b2dedfce85716/Screenshot%202026-06-21%20013629.png)
+![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/96e39f0a4a3f73b10659795fb18700b380c7ba3c/Screenshot%202026-06-21%20013629.png)
 
 # Freelancer Milestone Payment Platform
 
@@ -30,7 +30,7 @@ A decentralized milestone-based payment platform for freelancers built on the **
 - **Icons:** lucide-react
 - **Theme:** next-themes
 
-- ![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/c68868591155ed4216b342ce289b2dedfce85716/Screenshot%202026-06-21%20015719.png)
+- ![image alt](https://github.com/ChandranshuDutta025/Freelancer-milestone-Payment-Platform/blob/96e39f0a4a3f73b10659795fb18700b380c7ba3c/Screenshot%202026-06-21%20015719.png)
 
 
 ## Setup Instructions
