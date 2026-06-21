@@ -113,11 +113,12 @@ ai-resume-builder/
 
 | Property | Value |
 |----------|-------|
-| **Contract ID** | `CBHBYWB6G3YC4Q56RUEXIMKD6FRUCQMAHUQKKMH2LY45KYVJZ7XMVGK4` |
+| **Contract ID** | `CDLXSOVSVT5XJS3S5YUV74SY4T3LBX4Z32L3TP47HVUVVCNOFTB27GKZ` |
 | **Network** | Stellar Testnet |
 | **RPC Endpoint** | `https://soroban-testnet.stellar.org` |
-| **Explorer** | [View on stellar.expert](https://stellar.expert/explorer/testnet/contract/CBHBYWB6G3YC4Q56RUEXIMKD6FRUCQMAHUQKKMH2LY45KYVJZ7XMVGK4) |
-| **Freelancer Pay** | [Stellar Expert](https://stellar.expert/explorer/testnet/account/GBUBVSW6QMR2LYVE4NL34P5Q3RIXXMA2WTR3NOIFPPAHOTD4QJBAPD7P) |
+| **Explorer** | [View on stellar.expert](https://stellar.expert/explorer/testnet/contract/CDLXSOVSVT5XJS3S5YUV74SY4T3LBX4Z32L3TP47HVUVVCNOFTB27GKZ) |
+| **Wallet ID** | `GAQEKHOH4L6V4Y64KL2X3HDFAJ3DQKK6ZGGL4EPZKMKB4DWZF4V6FXW3` |
+| **Freelancer Pay** | [Stellar Expert](https://stellar.expert/explorer/testnet/account/GAQEKHOH4L6V4Y64KL2X3HDFAJ3DQKK6ZGGL4EPZKMKB4DWZF4V6FXW3) |
 
 > ⚠️ The contract is deployed on **Testnet**. Fund your wallet via the [Stellar Lab Friendbot](https://lab.stellar.org/account/create) before interacting.
 
