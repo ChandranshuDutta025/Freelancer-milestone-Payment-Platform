@@ -29,6 +29,7 @@ interface WalletState {
   setBalance: (balance: string) => void;
   setError: (error: string | null) => void;
   getAddress: () => string | null;
+  signTransaction: (xdr: string) => Promise<string>;
 }
 
 const WALLET_MODULES = [
@@ -157,4 +158,11 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   setError: (error: string | null) => set({ error }),
 
   getAddress: () => get().address,
+
+  signTransaction: async (xdr: string) => {
+    const { signedTxXdr } = await StellarWalletsKit.signTransaction(xdr, {
+      networkPassphrase: Networks.TESTNET,
+    });
+    return signedTxXdr;
+  },
 }));

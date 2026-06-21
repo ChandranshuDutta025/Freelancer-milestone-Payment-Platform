@@ -20,6 +20,8 @@ import {
 } from "@stellar/stellar-sdk"
 import type { Project, Milestone, MilestoneInput } from "@/types"
 
+const FALLBACK_SOURCE = "GBUBVSW6QMR2LYVE4NL34P5Q3RIXXMA2WTR3NOIFPPAHOTD4QJBAPD7P"
+
 function getServer(): rpc.Server {
   return new rpc.Server(STELLAR_RPC_URL)
 }
@@ -34,18 +36,30 @@ function isSimSuccess(
   return rpc.Api.isSimulationSuccess(res)
 }
 
+async function getSourceAccount(server: rpc.Server, sourceKey: string) {
+  try {
+    return await server.getAccount(sourceKey)
+  } catch {
+    const fallback = await server.getAccount(FALLBACK_SOURCE)
+    return fallback
+  }
+}
+
 // --- Read Hooks ---
 
 export function useGetProject(projectId: number | null) {
+  const { address } = useWallet()
+
   return useQuery({
     queryKey: ["project", projectId],
     queryFn: async () => {
       if (!projectId) throw new Error("No project ID")
       const server = getServer()
       const contract = getContract()
+      const source = await getSourceAccount(server, address ?? FALLBACK_SOURCE)
 
       const res = await server.simulateTransaction(
-        new TransactionBuilder(await server.getAccount(CONTRACT_ID), {
+        new TransactionBuilder(source, {
           fee: BASE_FEE,
           networkPassphrase: STELLAR_NETWORK_PASSPHRASE,
         })
@@ -72,15 +86,18 @@ export function useGetMilestone(
   projectId: number | null,
   milestoneId: number | null,
 ) {
+  const { address } = useWallet()
+
   return useQuery({
     queryKey: ["milestone", projectId, milestoneId],
     queryFn: async () => {
       if (!projectId || !milestoneId) throw new Error("Missing IDs")
       const server = getServer()
       const contract = getContract()
+      const source = await getSourceAccount(server, address ?? FALLBACK_SOURCE)
 
       const res = await server.simulateTransaction(
-        new TransactionBuilder(await server.getAccount(CONTRACT_ID), {
+        new TransactionBuilder(source, {
           fee: BASE_FEE,
           networkPassphrase: STELLAR_NETWORK_PASSPHRASE,
         })
@@ -113,9 +130,10 @@ export function useGetClientProjects() {
       if (!address) return []
       const server = getServer()
       const contract = getContract()
+      const source = await getSourceAccount(server, address)
 
       const res = await server.simulateTransaction(
-        new TransactionBuilder(await server.getAccount(CONTRACT_ID), {
+        new TransactionBuilder(source, {
           fee: BASE_FEE,
           networkPassphrase: STELLAR_NETWORK_PASSPHRASE,
         })
@@ -145,9 +163,10 @@ export function useGetFreelancerProjects() {
       if (!address) return []
       const server = getServer()
       const contract = getContract()
+      const source = await getSourceAccount(server, address)
 
       const res = await server.simulateTransaction(
-        new TransactionBuilder(await server.getAccount(CONTRACT_ID), {
+        new TransactionBuilder(source, {
           fee: BASE_FEE,
           networkPassphrase: STELLAR_NETWORK_PASSPHRASE,
         })
@@ -169,15 +188,18 @@ export function useGetFreelancerProjects() {
 }
 
 export function useGetProjectMilestones(projectId: number | null) {
+  const { address } = useWallet()
+
   return useQuery({
     queryKey: ["projectMilestones", projectId],
     queryFn: async () => {
       if (!projectId) return []
       const server = getServer()
       const contract = getContract()
+      const source = await getSourceAccount(server, address ?? FALLBACK_SOURCE)
 
       const res = await server.simulateTransaction(
-        new TransactionBuilder(await server.getAccount(CONTRACT_ID), {
+        new TransactionBuilder(source, {
           fee: BASE_FEE,
           networkPassphrase: STELLAR_NETWORK_PASSPHRASE,
         })
@@ -200,14 +222,17 @@ export function useGetProjectMilestones(projectId: number | null) {
 }
 
 export function useGetProjectCount() {
+  const { address } = useWallet()
+
   return useQuery({
     queryKey: ["projectCount"],
     queryFn: async () => {
       const server = getServer()
       const contract = getContract()
+      const source = await getSourceAccount(server, address ?? FALLBACK_SOURCE)
 
       const res = await server.simulateTransaction(
-        new TransactionBuilder(await server.getAccount(CONTRACT_ID), {
+        new TransactionBuilder(source, {
           fee: BASE_FEE,
           networkPassphrase: STELLAR_NETWORK_PASSPHRASE,
         })
@@ -230,7 +255,7 @@ function useContractMutation<TData = unknown>(options: {
   buildArgs: (vars: TData) => xdr.ScVal[]
 }) {
   const queryClient = useQueryClient()
-  const { address, isConnected, setError } = useWallet()
+  const { address, isConnected, setError, signTransaction } = useWallet()
   const addTransaction = useTransactionStore((s) => s.addTransaction)
   const updateTransaction = useTransactionStore((s) => s.updateTransaction)
 
@@ -253,20 +278,40 @@ function useContractMutation<TData = unknown>(options: {
 
       const simulated = await server.simulateTransaction(tx)
       if (!isSimSuccess(simulated)) {
-        throw new Error("Simulation failed")
+        const msg =
+          simulated.error?.replace("HostError: ", "") ?? "Simulation failed"
+        throw new Error(`Simulation failed: ${msg}`)
       }
 
-      const prepared = await server.prepareTransaction(tx)
-      const sendResult = await server.sendTransaction(prepared)
+      const txXdr = simulated.transactionData
+        ? (rpc.assembleTransaction(tx, simulated) as any).build().toXDR()
+        : (tx as any).toXDR()
 
-      if (sendResult.errorResult) {
-        throw new Error(
-          sendResult.errorResult.result?.toString() ?? "Transaction failed",
-        )
-      }
+      const signedXdr = await signTransaction(txXdr)
 
-      const txHash = sendResult.hash
+      const raw = await fetch(STELLAR_RPC_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "sendTransaction",
+          params: { transaction: signedXdr },
+        }),
+      })
+      const sendJson: {
+        result?: { status: string; hash: string; errorResult?: unknown }
+        error?: { message: string }
+      } = await raw.json()
+      if (sendJson.error)
+        throw new Error(sendJson.error.message)
+      if (!sendJson.result?.hash)
+        throw new Error("sendTransaction failed: missing hash")
+      if (sendJson.result.status === "ERROR")
+        throw new Error("sendTransaction returned ERROR")
+      const txHash = sendJson.result.hash
 
+      console.log("[mutation] calling addTransaction:", txHash)
       addTransaction({
         hash: txHash,
         status: "pending",
@@ -274,33 +319,49 @@ function useContractMutation<TData = unknown>(options: {
         timestamp: Date.now(),
       })
 
-      let sendStatus = sendResult.status
       let attempts = 0
-      while (sendStatus === "PENDING" && attempts < 30) {
+      while (attempts < 30) {
         await new Promise((r) => setTimeout(r, 1000))
-        const txResult = await server.getTransaction(txHash)
-        const getStatus = txResult.status
 
-        if (getStatus === rpc.Api.GetTransactionStatus.SUCCESS) {
+        const raw = await fetch(STELLAR_RPC_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: 1,
+            method: "getTransaction",
+            params: { hash: txHash },
+          }),
+        })
+        const json: {
+          result?: {
+            status: string
+            txHash: string
+            envelopeXdr?: string
+            resultXdr?: string
+          }
+          error?: { message: string }
+        } = await raw.json()
+
+        if (json.error) {
+          attempts++
+          continue
+        }
+
+        const txResult = json.result!
+        if (txResult.status === "SUCCESS") {
           updateTransaction(txHash, { status: "success" })
           return { result: txResult, transactionHash: txHash }
         }
-        if (getStatus === rpc.Api.GetTransactionStatus.FAILED) {
+        if (txResult.status === "FAILED") {
           updateTransaction(txHash, { status: "failed" })
           throw new Error("Transaction failed on network")
         }
         attempts++
       }
 
-      if (sendStatus === "PENDING") {
-        updateTransaction(txHash, {
-          status: "failed",
-          errorMessage: "Timeout",
-        })
-        throw new Error("Transaction timed out")
-      }
-
-      return { result: sendResult, transactionHash: txHash }
+      updateTransaction(txHash, { status: "failed", errorMessage: "Timeout" })
+      throw new Error("Transaction timed out")
     },
     onSuccess: () => {
       queryClient.invalidateQueries()
@@ -326,13 +387,23 @@ export function useCreateProject() {
       nativeToScVal(vars.client, { type: "address" }),
       nativeToScVal(vars.title, { type: "string" }),
       nativeToScVal(vars.description, { type: "string" }),
-      nativeToScVal(
-        vars.milestones.map((m) => ({
-          title: m.title,
-          description: m.description,
-          amount: m.amount * 10_000_000,
-        })),
-        { type: "vec" },
+      xdr.ScVal.scvVec(
+        vars.milestones.map((m) =>
+          xdr.scvSortedMap([
+            new xdr.ScMapEntry({
+              key: xdr.ScVal.scvSymbol("amount"),
+              val: nativeToScVal(BigInt(Math.round(m.amount * 10_000_000)), { type: "i128" }),
+            }),
+            new xdr.ScMapEntry({
+              key: xdr.ScVal.scvSymbol("description"),
+              val: nativeToScVal(m.description, { type: "string" }),
+            }),
+            new xdr.ScMapEntry({
+              key: xdr.ScVal.scvSymbol("title"),
+              val: nativeToScVal(m.title, { type: "string" }),
+            }),
+          ]),
+        ),
       ),
     ],
   })
@@ -348,6 +419,7 @@ export function useCreateProject() {
       },
     ) => {
       const result = await mutation.mutateAsync(vars)
+      console.log("[useCreateProject] calling addEvent, tx:", result.transactionHash)
       addEvent({
         id: `evt-${Date.now()}`,
         type: "project_created",
@@ -435,6 +507,16 @@ export function useCancelProject() {
   return useContractMutation<{ projectId: number }>({
     contractFn: "cancel_project",
     buildArgs: (vars) => [
+      nativeToScVal(vars.projectId, { type: "u64" }),
+    ],
+  })
+}
+
+export function useDeleteProject() {
+  return useContractMutation<{ projectId: number; client: string }>({
+    contractFn: "delete_project",
+    buildArgs: (vars) => [
+      nativeToScVal(vars.client, { type: "address" }),
       nativeToScVal(vars.projectId, { type: "u64" }),
     ],
   })

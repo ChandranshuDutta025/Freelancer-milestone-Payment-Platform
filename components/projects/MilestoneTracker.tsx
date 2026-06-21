@@ -1,5 +1,6 @@
 "use client"
 
+import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -15,6 +16,7 @@ import { useWallet } from "@/hooks/useWallet"
 import { formatXlm } from "@/lib/utils"
 import { Loader2, CheckCircle, Circle, DollarSign, ThumbsUp, Send } from "lucide-react"
 import { toast } from "sonner"
+
 import type { Milestone, Project } from "@/types"
 
 const statusConfig: Record<string, { label: string; color: "default" | "secondary" | "outline" | "destructive"; icon: React.ReactNode }> = {
@@ -93,9 +95,16 @@ export function MilestoneTracker({ project }: MilestoneTrackerProps) {
   if (isLoading) {
     return (
       <div className="space-y-3">
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-12 w-full" />
+        {[1, 2, 3].map((i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.08 }}
+          >
+            <Skeleton className="h-12 w-full" />
+          </motion.div>
+        ))}
       </div>
     )
   }
@@ -113,77 +122,113 @@ export function MilestoneTracker({ project }: MilestoneTrackerProps) {
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">Progress</span>
-          <span className="font-medium">{progress}/{total} paid ({progressPct}%)</span>
+          <motion.span
+            className="font-medium"
+            key={`${progress}-${total}`}
+            initial={{ scale: 1.2, color: "hsl(210 100% 66%)" }}
+            animate={{ scale: 1, color: "hsl(var(--foreground))" }}
+            transition={{ duration: 0.3 }}
+          >
+            {progress}/{total} paid ({progressPct}%)
+          </motion.span>
         </div>
         <div className="h-2 bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary transition-all duration-500 rounded-full"
-            style={{ width: `${progressPct}%` }}
+          <motion.div
+            className="h-full bg-primary rounded-full"
+            initial={{ width: 0 }}
+            whileInView={{ width: `${progressPct}%` }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           />
         </div>
       </div>
 
       <Accordion type="single" collapsible className="w-full">
-        {milestones.map((milestone) => {
+        {milestones.map((milestone, idx) => {
           const cfg = statusConfig[milestone.status] ?? statusConfig.Pending
           const isPending = depositMilestone.isPending || submitMilestone.isPending ||
             approveMilestone.isPending || releasePayment.isPending
 
           return (
-            <AccordionItem key={milestone.id} value={`m-${milestone.id}`}>
-              <AccordionTrigger className="hover:no-underline">
-                <div className="flex items-center gap-3 flex-1">
-                  <Badge variant={cfg.color} className="gap-1">
-                    {cfg.icon}
-                    {cfg.label}
-                  </Badge>
-                  <span className="text-sm font-medium">{milestone.title}</span>
-                  <span className="text-sm text-muted-foreground ml-auto">{formatXlm(milestone.amount)} XLM</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">{milestone.description}</p>
-
-                <div className="flex flex-wrap gap-2">
-                  {milestone.status === "Pending" && isClient && (
-                    <Button size="sm" onClick={() => handleDeposit(milestone)} disabled={isPending} className="gap-1">
-                      {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <DollarSign className="h-3 w-3" />}
-                      Deposit {formatXlm(milestone.amount)} XLM
-                    </Button>
-                  )}
-
-                  {milestone.status === "InProgress" && isFreelancer && (
-                    <Button size="sm" onClick={() => handleSubmit(milestone)} disabled={isPending} className="gap-1">
-                      {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
-                      Submit Work
-                    </Button>
-                  )}
-
-                  {milestone.status === "Submitted" && isClient && (
-                    <>
-                      <Button size="sm" onClick={() => handleApprove(milestone)} disabled={isPending} className="gap-1">
-                        {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <ThumbsUp className="h-3 w-3" />}
-                        Approve
-                      </Button>
-                    </>
-                  )}
-
-                  {milestone.status === "Approved" && (
-                    <Button size="sm" onClick={() => handleRelease(milestone)} disabled={isPending} className="gap-1">
-                      {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <DollarSign className="h-3 w-3" />}
-                      Release Payment
-                    </Button>
-                  )}
-
-                  {milestone.status === "Paid" && (
-                    <Badge variant="outline" className="gap-1 text-green-500">
-                      <CheckCircle className="h-3 w-3" />
-                      Payment Released
+            <motion.div
+              key={milestone.id}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: idx * 0.06 }}
+            >
+              <AccordionItem value={`m-${milestone.id}`}>
+                <AccordionTrigger className="hover:no-underline">
+                  <div className="flex items-center gap-3 flex-1">
+                    <Badge variant={cfg.color} className="gap-1">
+                      {cfg.icon}
+                      {cfg.label}
                     </Badge>
-                  )}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+                    <span className="text-sm font-medium">{milestone.title}</span>
+                    <span className="text-sm text-muted-foreground ml-auto">{formatXlm(milestone.amount)} XLM</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">{milestone.description}</p>
+
+                  <motion.div
+                    className="flex flex-wrap gap-2"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {milestone.status === "Pending" && isClient && (
+                      <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                        <Button size="sm" onClick={() => handleDeposit(milestone)} disabled={isPending} className="gap-1">
+                          {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <DollarSign className="h-3 w-3" />}
+                          Deposit {formatXlm(milestone.amount)} XLM
+                        </Button>
+                      </motion.div>
+                    )}
+
+                    {milestone.status === "InProgress" && isFreelancer && (
+                      <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                        <Button size="sm" onClick={() => handleSubmit(milestone)} disabled={isPending} className="gap-1">
+                          {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+                          Submit Work
+                        </Button>
+                      </motion.div>
+                    )}
+
+                    {milestone.status === "Submitted" && isClient && (
+                      <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                        <Button size="sm" onClick={() => handleApprove(milestone)} disabled={isPending} className="gap-1">
+                          {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <ThumbsUp className="h-3 w-3" />}
+                          Approve
+                        </Button>
+                      </motion.div>
+                    )}
+
+                    {milestone.status === "Approved" && (
+                      <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                        <Button size="sm" onClick={() => handleRelease(milestone)} disabled={isPending} className="gap-1">
+                          {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <DollarSign className="h-3 w-3" />}
+                          Release Payment
+                        </Button>
+                      </motion.div>
+                    )}
+
+                    {milestone.status === "Paid" && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <Badge variant="outline" className="gap-1 text-green-500">
+                          <CheckCircle className="h-3 w-3" />
+                          Payment Released
+                        </Badge>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
           )
         })}
       </Accordion>

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -80,7 +81,12 @@ export function CreateProjectModal({ open, onOpenChange }: CreateProjectModalPro
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          <div className="space-y-2">
+          <motion.div
+            className="space-y-2"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+          >
             <Label htmlFor="title">Project Title</Label>
             <Input
               id="title"
@@ -88,9 +94,14 @@ export function CreateProjectModal({ open, onOpenChange }: CreateProjectModalPro
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g., Build a React Dashboard"
             />
-          </div>
+          </motion.div>
 
-          <div className="space-y-2">
+          <motion.div
+            className="space-y-2"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
             <Label htmlFor="description">Description</Label>
             <textarea
               id="description"
@@ -99,58 +110,81 @@ export function CreateProjectModal({ open, onOpenChange }: CreateProjectModalPro
               placeholder="Describe your project..."
               className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
-          </div>
+          </motion.div>
 
-          <div className="space-y-3">
+          <motion.div
+            className="space-y-3"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+          >
             <div className="flex items-center justify-between">
               <Label>Milestones</Label>
-              <Button variant="outline" size="sm" onClick={addMilestone} className="gap-1">
-                <Plus className="h-3 w-3" />
-                Add Milestone
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+                <Button variant="outline" size="sm" onClick={addMilestone} className="gap-1">
+                  <Plus className="h-3 w-3" />
+                  Add Milestone
+                </Button>
+              </motion.div>
             </div>
 
-            {milestones.map((milestone, index) => (
-              <div key={index} className="border rounded-lg p-3 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Milestone {index + 1}</span>
-                  {milestones.length > 1 && (
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeMilestone(index)}>
-                      <Trash2 className="h-3 w-3 text-destructive" />
-                    </Button>
-                  )}
-                </div>
-                <Input
-                  placeholder="Milestone title"
-                  value={milestone.title}
-                  onChange={(e) => updateMilestone(index, "title", e.target.value)}
-                />
-                <textarea
-                  placeholder="Description"
-                  value={milestone.description}
-                  onChange={(e) => updateMilestone(index, "description", e.target.value)}
-                  className="flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                />
-                <Input
-                  type="number"
-                  step="0.1"
-                  placeholder="Amount (XLM)"
-                  value={milestone.amount || ""}
-                  onChange={(e) => updateMilestone(index, "amount", Number.parseFloat(e.target.value) || 0)}
-                />
-              </div>
-            ))}
-          </div>
+            <AnimatePresence mode="popLayout">
+              {milestones.map((milestone, index) => (
+                <motion.div
+                  key={`${index}-${milestones.length}`}
+                  layout
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginBottom: 8 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="border rounded-lg p-3 space-y-2 overflow-hidden"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Milestone {index + 1}</span>
+                    {milestones.length > 1 && (
+                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeMilestone(index)}>
+                          <Trash2 className="h-3 w-3 text-destructive" />
+                        </Button>
+                      </motion.div>
+                    )}
+                  </div>
+                  <Input
+                    placeholder="Milestone title"
+                    value={milestone.title}
+                    onChange={(e) => updateMilestone(index, "title", e.target.value)}
+                  />
+                  <textarea
+                    placeholder="Description"
+                    value={milestone.description}
+                    onChange={(e) => updateMilestone(index, "description", e.target.value)}
+                    className="flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  />
+                  <Input
+                    type="number"
+                    step="0.1"
+                    placeholder="Amount (XLM)"
+                    value={milestone.amount || ""}
+                    onChange={(e) => updateMilestone(index, "amount", Number.parseFloat(e.target.value) || 0)}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting || !title.trim()}>
-            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSubmitting ? "Creating..." : "Create Project"}
-          </Button>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+              Cancel
+            </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button onClick={handleSubmit} disabled={isSubmitting || !title.trim()}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSubmitting ? "Creating..." : "Create Project"}
+            </Button>
+          </motion.div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

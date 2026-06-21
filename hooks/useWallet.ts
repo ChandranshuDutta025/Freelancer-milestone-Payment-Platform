@@ -19,6 +19,7 @@ export function useWallet() {
   const setBalance = useWalletStore((s) => s.setBalance)
   const setError = useWalletStore((s) => s.setError)
   const getAddress = useWalletStore((s) => s.getAddress)
+  const signTransaction = useWalletStore((s) => s.signTransaction)
 
   useEffect(() => {
     initialize()
@@ -39,5 +40,6 @@ export function useWallet() {
     setBalance,
     setError,
     getAddress,
+    signTransaction,
   }
 }

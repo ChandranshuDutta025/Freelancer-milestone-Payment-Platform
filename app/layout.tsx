@@ -5,6 +5,10 @@ import { Navbar } from "@/components/layout/Navbar"
 import { Footer } from "@/components/layout/Footer"
 import { Toaster } from "sonner"
 import { QueryProvider } from "./query-provider"
+import { PageTransitionProvider } from "./page-transition"
+import { MouseFollower } from "@/components/ui/MouseFollower"
+import { AnimatedBackground } from "@/components/ui/AnimatedBackground"
+import { StoreProvider } from "@/components/StoreProvider"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -32,13 +36,19 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <QueryProvider>
-          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-            <div className="flex min-h-screen flex-col">
+          <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
+            <StoreProvider>
+            <AnimatedBackground />
+            <MouseFollower />
+            <div className="flex min-h-screen flex-col relative z-10">
               <Navbar />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 pt-16">
+                <PageTransitionProvider>{children}</PageTransitionProvider>
+              </main>
               <Footer />
             </div>
             <Toaster richColors closeButton />
+            </StoreProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>
