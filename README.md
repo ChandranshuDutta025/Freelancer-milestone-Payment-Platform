@@ -422,7 +422,16 @@ Each milestone gets individual budget, title, and description.
 
 ## 📡 Deployed Contracts
 
-### Stellar Testnet
+### Vercel (Frontend)
+
+| Property | Value |
+|----------|-------|
+| **Production URL** | [https://ai-resume-builder-eta-nine.vercel.app](https://ai-resume-builder-eta-nine.vercel.app) |
+| **Project ID** | `prj_Yn498rk6RkIjZfbgOrNAV703IV88` |
+| **Framework** | Next.js 15 (Turbopack) |
+| **Auto-Deploy** | `main` branch → Vercel |
+
+### Stellar Testnet (Smart Contract)
 
 | Property | Value |
 |----------|-------|
